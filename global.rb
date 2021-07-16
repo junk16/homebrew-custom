@@ -21,16 +21,8 @@ class Global < Formula
 
     depends_on "autoconf" => :build
     depends_on "automake" => :build
-    depends_on "bison" => :build
-    depends_on "flex" => :build
-    ## gperf is provided by OSX Command Line Tools.
-    depends_on "libtool" => :build
   end
 
-  depends_on "ctags"
-  depends_on "python@3.9"
-
-  uses_from_macos "ncurses"
 
   on_linux do
     depends_on "libtool"
@@ -38,19 +30,8 @@ class Global < Formula
 
   skip_clean "lib/gtags"
 
-  resource "Pygments" do
-    url "https://files.pythonhosted.org/packages/ba/6e/7a7c13c21d8a4a7f82ccbfe257a045890d4dbf18c023f985f565f97393e3/Pygments-2.9.0.tar.gz"
-    sha256 "a18f47b506a429f6f4b9df81bb02beab9ca21d0a5fee38ed15aef65f0545519f"
-  end
-
   def install
     system "sh", "reconf.sh" if build.head?
-
-    ENV.prepend_create_path "PYTHONPATH", libexec/Language::Python.site_packages("python3")
-
-    resource("Pygments").stage do
-      system "python3", *Language::Python.setup_install_args(libexec)
-    end
 
     args = %W[
       --prefix=#{prefix}
@@ -60,9 +41,7 @@ class Global < Formula
     system "./configure", *args
     system "make", "install"
 
-    rewrite_shebang detected_python_shebang, share/"gtags/script/pygments_parser.py"
 
-    bin.env_script_all_files(libexec/"bin", PYTHONPATH: ENV["PYTHONPATH"])
 
     etc.install "gtags.conf"
 
