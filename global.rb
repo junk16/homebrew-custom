@@ -53,10 +53,7 @@ class Global < Formula
     end
 
     args = %W[
-###      --disable-dependency-tracking
       --prefix=#{prefix}
-##      --sysconfdir=#{etc}
-##      --with-exuberant-ctags=#{Formula["ctags"].opt_bin}/ctags
       --with-sqlite3
     ]
 
